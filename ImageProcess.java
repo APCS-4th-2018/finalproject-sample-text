@@ -1,6 +1,9 @@
+import java.io.ByteArrayInputStream;
 import javafx.scene.image.Image;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
 import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 
 /**
@@ -101,6 +104,8 @@ public class ImageProcess
 
     public Image takeFrame()
     {
+        Image output = null;
+
         if (cap.isOpened())
         {
             // take a picture
@@ -112,16 +117,33 @@ public class ImageProcess
 
             // process eye
             processEye(frame, faces);
+
+            // Convert to `Image`
+            MatOfByte buffer = new MatOfByte();
+            Imgcodecs.imencode(".png", frame, buffer);
+            output = new Image(new ByteArrayInputStream(buffer.toArray()));
         }
+
+        return output;
     }
 
     private Rect[] processFace(Mat frame)
     {
-        return new Rect[1];
+        Rect[] faces = faceClassifier.findAll(frame, 1.3, 5);
+
+        if (faceReplacer != null)
+            for (Rect face: faces)
+                faceReplacer.replace(frame, face);
+
+        return faces;
     }
 
     private void processEye(Mat frame, Rect[] faces)
     {
+        Rect[] eyes = eyeClassifier.findAll(frame, 2.0, 1);
 
+        if (eyeReplacer != null)
+            for (Rect eye: eyes)
+                eyeReplacer.replace(frame, eye);
     }
 }
