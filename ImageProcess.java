@@ -51,5 +51,41 @@ public class ImageProcess
         cap.open(vidIndex);
     }
 
-    
+    /**
+     * Change the face replacer.
+     *
+     * @param face New image to replace with.
+     * @param faceMask Alpha mask.
+     */
+    public void setFaceReplacer(Mat face, Mat faceMask)
+    {
+        faceReplacer = new Replacer(face, faceMask);
+    }
+
+    /**
+     * Disable the face replacer.
+     */
+    public void setFaceReplacer()
+    {
+        faceReplacer = null;
+    }
+
+    /**
+     * Change the eye replacer.
+     *
+     * @param eye New image to replace with.
+     * @param eyeMask Alpha mask.
+     */
+    public void setEyeReplacer(Mat eye, Mat eyeMask)
+    {
+        eyeReplacer = new Replacer(eye, eyeMask);
+    }
+
+    /**
+     * Disable the eye replacer.
+     */
+    public void setEyeReplacer()
+    {
+        eyeReplacer = null;
+    }
 }
