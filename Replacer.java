@@ -1,5 +1,7 @@
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -40,5 +42,28 @@ public class Replacer
         // Create a blank mask
         mask = Mat.ones(myReplacement.rows(), myReplacement.cols(), CvType.CV_8UC1);
         replacement = myReplacement;
+    }
+
+    /**
+     * Replace a region of intrest with another image.
+     *
+     * @param frame Frame in question. Frame is modified.
+     * @param roi Region to be replaced.
+     */
+    public void replace(Mat frame, Rect roi)
+    {
+        // Create a sub frame
+        Mat submat = frame.submat(roi);
+
+        // Create a modifiable image
+        Mat img = replacement.clone();
+        Mat alpha = mask.clone();
+
+        // Resize the replacement
+        Imgproc.resize(img, img, new Size(roi.width, roi.height));
+        Imgproc.resize(alpha, alpha, new Size(roi.width, roi.height));
+
+        // Copy with mask
+        img.copyTo(submat, alpha);
     }
 }
