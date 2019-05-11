@@ -1,4 +1,6 @@
+import javafx.scene.image.Image;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.videoio.VideoCapture;
 
 /**
@@ -95,5 +97,31 @@ public class ImageProcess
     public void close()
     {
         cap.release();
+    }
+
+    public Image takeFrame()
+    {
+        if (cap.isOpened())
+        {
+            // take a picture
+            Mat frame = new Mat();
+            cap.read(frame);
+
+            // process face
+            Rect[] faces = processFace(frame);
+
+            // process eye
+            processEye(frame, faces);
+        }
+    }
+
+    private Rect[] processFace(Mat frame)
+    {
+        return new Rect[1];
+    }
+
+    private void processEye(Mat frame, Rect[] faces)
+    {
+
     }
 }
