@@ -35,4 +35,21 @@ public class ImageProcess
         faceReplacer = new Replacer(faceImg, faceImgMask);
         eyeReplacer = new Replacer(eyeImg, eyeImgMask);
     }
+
+    /**
+     * Change the vidCap index.
+     *
+     * @param vidIndex New index to change vidCap to.
+     */
+    public void changeVidCap(int vidIndex)
+    {
+        // Release if open
+        if (cap.isOpened())
+            cap.release();
+
+        // Reopen with `vidIndex`
+        cap.open(vidIndex);
+    }
+
+    
 }
