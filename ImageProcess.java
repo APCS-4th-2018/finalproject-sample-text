@@ -88,4 +88,12 @@ public class ImageProcess
     {
         eyeReplacer = null;
     }
+
+    /**
+     * Exit gracefully.
+     */
+    public void close()
+    {
+        cap.release();
+    }
 }
