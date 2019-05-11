@@ -1,8 +1,7 @@
+import java.util.Vector;
 import java.io.ByteArrayInputStream;
 import javafx.scene.image.Image;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.Rect;
+import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 
@@ -102,6 +101,11 @@ public class ImageProcess
         cap.release();
     }
 
+    /**
+     * Take a frame, process it, and return it as an <code>Image</code>
+     *
+     * @return <code>Image</code> object with the output frame.
+     */
     public Image takeFrame()
     {
         Image output = null;
@@ -145,5 +149,41 @@ public class ImageProcess
         if (eyeReplacer != null)
             for (Rect eye: eyes)
                 eyeReplacer.replace(frame, eye);
+    }
+
+    /**
+     * Image load helper.
+     *
+     * @param filename Filename of image to load.
+     * @return Array of 2 <code>Mat</code>'s. Image and alpha mask.
+     */
+    public static Mat[] loadImage(String filename)
+    {
+        Mat[] output = new Mat[2];
+
+        // Load the image
+        Mat img = Imgcodecs.imread(filename, Imgcodecs.IMREAD_UNCHANGED);
+
+        // Generate the mask
+        Mat mask;
+        if (img.channels() == 4)
+        {
+            // split the image
+            Vector<Mat> rgba = new Vector<Mat>();
+            Core.split(img, rgba);
+
+            // get the alpha channel
+            mask = rgba.remove(3);
+
+            // merge the image
+            Core.merge(rgba, img);
+        }
+        else
+            mask = Mat.ones(img.rows(), img.cols(), CvType.CV_8UC1);
+
+        output[0] = img;
+        output[1] = mask;
+
+        return output;
     }
 }
