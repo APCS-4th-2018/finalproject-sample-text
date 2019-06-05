@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class GraphicInterface extends Application
 {
     private static ImageProcess camera;
+    private ScheduledExecutorService timer;
     private ImageView display;
 
     @Override
@@ -29,7 +30,7 @@ public class GraphicInterface extends Application
         display.setPreserveRatio(true);
 
         // Start frame capture
-        ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
+        timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleAtFixedRate(this::capture, 0, 33, TimeUnit.MILLISECONDS);
 
         // Simple GUI organization
@@ -48,6 +49,7 @@ public class GraphicInterface extends Application
     {
         // Gracefully close the camera
         camera.close();
+        timer.shutdown();
     }
 
     private void capture()
