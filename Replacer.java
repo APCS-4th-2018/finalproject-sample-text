@@ -52,6 +52,13 @@ public class Replacer
      */
     public void replace(Mat frame, Rect roi)
     {
+        // Scale the roi
+        roi.x -= roi.width / 3;
+        roi.y -= roi.height / 3;
+
+        roi.width *= 1.5;
+        roi.height *= 1.5;
+
         // Create a sub frame
         Mat submat = frame.submat(roi);
 
