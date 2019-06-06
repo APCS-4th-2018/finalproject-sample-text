@@ -6,16 +6,13 @@
  * @version (a version number or a date)
  */
 import javafx.application.Application;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceBox;
 import javafx.geometry.Insets;
@@ -37,19 +34,35 @@ public class OpenCVFx extends Application
     @Override
     public void start(Stage stage)
     {
+        // Create a gridpane
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setHgap(8);
         grid.setVgap(8);
 
-        ImageView img = new ImageView();
+        // Force column sizing
+        ColumnConstraints cols = new ColumnConstraints();
+        cols.setPercentWidth(10);
+
+        RowConstraints rows = new RowConstraints();
+        rows.setPercentHeight(12);
+
+        for (int c = 0; c < 10; c++)
+            grid.getColumnConstraints().add(cols);
+        for (int r = 0; r < 8; r++)
+            grid.getRowConstraints().add(rows);
+
+        // Create the display image
+        img = new ImageView();
         img.setX(50);
         img.setY(25);
         img.setFitHeight(455);
         img.setFitWidth(500);
         img.setPreserveRatio(true);
+
+        grid.add(img, 2, 0, 8, 7);
         
-        //Default eye buttons (replace prints with uploading image to window
+        // Default eye buttons (replace prints with uploading image to window
         Button googly = new Button("Googly Eyes");
         googly.setOnAction(e -> System.out.println("googly"));
         Button monocle = new Button("Monocle");
@@ -63,7 +76,7 @@ public class OpenCVFx extends Application
         Button tears = new Button ("Tears");
         tears.setOnAction(e -> System.out.println("tears"));
         
-        //Default head buttons
+        // Default head buttons
         Button Lantsberger = new Button("Lantsberger");
         Lantsberger.setOnAction(e -> System.out.println("teach"));
         Button walrus = new Button("Walrus");
@@ -81,7 +94,7 @@ public class OpenCVFx extends Application
         Button harold = new Button("Harold");
         harold.setOnAction(e -> System.out.println("harold"));
 
-        //Top buttons
+        // Top buttons
         Button button1 = new Button("Clear window");
         button1.setOnAction(e -> System.out.println("Clear"));
         grid.add(button1, 0, 0, 2, 1);
@@ -90,10 +103,7 @@ public class OpenCVFx extends Application
         button1.setOnAction(e -> System.out.println("Upload"));
         grid.add(button2, 0, 1, 2, 1);
         
-        //Image
-        grid.add(img, 2, 0, 8, 7);
-        
-        //Default images
+        // Default images
         Label defaultopts = new Label("Default");
         grid.add(defaultopts, 0, 2, 1, 2);
         
@@ -115,7 +125,7 @@ public class OpenCVFx extends Application
                                       harold);
         grid.add(defaultHead, 1, 4);
         
-        //Custom images
+        // Custom images
         Label custom = new Label("Custom: ");
         grid.add(custom, 0, 5, 1, 2);
         
