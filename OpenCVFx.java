@@ -1,13 +1,5 @@
-
-/**
- * GUI For the budget snapchat filter.
- *
- * @author Darrin Yun
- * @version 2.0
- */
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
@@ -28,6 +20,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * GUI For the budget snapchat filter.
+ *
+ * @author Darrin Yun
+ * @version 2.0
+ */
 public class OpenCVFx extends Application
 {
     private static final String[] EYEIMGS = {"imgs/googly.png", "imgs/monocle.png"};
@@ -93,9 +91,7 @@ public class OpenCVFx extends Application
         
         // Custom images
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(
-                new File(System.getProperty("user.home")));
-
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
         Label custom = new Label("Custom: ");
         grid.add(custom, 0, 5, 1, 2);
@@ -105,6 +101,9 @@ public class OpenCVFx extends Application
         {
             fileChooser.setTitle("View Pictures");
             String customEyeDir = fileChooser.showOpenDialog(stage).toString();
+
+            Mat[] eye = ImageProcess.loadImage(customEyeDir);
+            camera.setEyeReplacer(eye[0], eye[1]);
         });
         grid.add(customEye, 0, 6);
 
@@ -113,10 +112,13 @@ public class OpenCVFx extends Application
         {
             fileChooser.setTitle("View Pictures");
             String customHeadDir = fileChooser.showOpenDialog(stage).toString();
-            fileChooser.showOpenDialog(stage);
+
+            Mat[] face = ImageProcess.loadImage(customHeadDir);
+            camera.setFaceReplacer(face[0], face[1]);
         });
         grid.add(customHead, 0, 7);
 
+        // Frame grabber
         timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleAtFixedRate(this::capture, 100, 33, TimeUnit.MILLISECONDS);
 
@@ -157,9 +159,7 @@ public class OpenCVFx extends Application
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         // Load Camera
-        camera = new ImageProcess(0, "haarcascade_frontalface_default.xml", "haarcascade_eye.xml",
-                                  null, null, null, null);
-        
+        camera = new ImageProcess(0, "haarcascade_frontalface_default.xml", "haarcascade_eye.xml");
         
         launch(args);
     }
