@@ -6,6 +6,7 @@
  * @version (a version number or a date)
  */
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
@@ -26,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 public class OpenCVFx extends Application
 {
-    private ImageProcess imgs;
     private ImageView img;
     private static ImageProcess camera;
     private ScheduledExecutorService timer;
@@ -34,7 +34,7 @@ public class OpenCVFx extends Application
     @Override
     public void start(Stage stage)
     {
-        // Create a gridpane
+        // Create a GridPane
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setHgap(8);
@@ -61,38 +61,6 @@ public class OpenCVFx extends Application
         img.setPreserveRatio(true);
 
         grid.add(img, 2, 0, 8, 7);
-        
-        // Default eye buttons (replace prints with uploading image to window
-        Button googly = new Button("Googly Eyes");
-        googly.setOnAction(e -> System.out.println("googly"));
-        Button monocle = new Button("Monocle");
-        monocle.setOnAction(e -> System.out.println("mono"));
-        Button money = new Button ("Money");
-        money.setOnAction(e -> System.out.println("money"));
-        Button stars = new Button ("Stars");
-        stars.setOnAction(e -> System.out.println("stars"));
-        Button hearts = new Button ("Hearts");
-        hearts.setOnAction(e -> System.out.println("hearts"));
-        Button tears = new Button ("Tears");
-        tears.setOnAction(e -> System.out.println("tears"));
-        
-        // Default head buttons
-        Button Lantsberger = new Button("Lantsberger");
-        Lantsberger.setOnAction(e -> System.out.println("teach"));
-        Button walrus = new Button("Walrus");
-        walrus.setOnAction(e -> System.out.println("walrus"));
-        Button tophat = new Button("Top Hat");
-        tophat.setOnAction(e -> System.out.println("hat"));
-        Button stormCloud = new Button("Storm Cloud");
-        stormCloud.setOnAction(e -> System.out.println("storm cloud"));
-        Button duckBeak = new Button("Duck beak");
-        duckBeak.setOnAction(e -> System.out.println("quack"));
-        Button arnoldSchwarzenegger = new Button("Arnold Schwarzenegger");
-        arnoldSchwarzenegger.setOnAction(e -> System.out.println("arnold"));
-        Button rageFace = new Button("Rage face");
-        rageFace.setOnAction(e -> System.out.println("rage"));
-        Button harold = new Button("Harold");
-        harold.setOnAction(e -> System.out.println("harold"));
 
         // Top buttons
         Button button1 = new Button("Clear window");
@@ -110,19 +78,18 @@ public class OpenCVFx extends Application
         Label eyes = new Label("Eyes: ");
         grid.add(eyes, 0, 3);
         
-        ChoiceBox<Button> defaultEyes = new ChoiceBox<>();
-        defaultEyes.getItems().addAll(googly, monocle, money,
-                                      stars, hearts, tears);
+        ChoiceBox<String> defaultEyes = new ChoiceBox<String>();
+        defaultEyes.getItems().addAll("Googly Eyes", "Monocole", "Money", "Stars", "Hearts", "Tears");
+        defaultEyes.getSelectionModel().selectedIndexProperty().addListener(this::chooseEye);
         grid.add(defaultEyes, 1, 3);
         
         Label head = new Label("Head: ");
         grid.add(head, 0, 4);
         
-        ChoiceBox<Button> defaultHead = new ChoiceBox<>();
-        defaultHead.getItems().addAll(Lantsberger, walrus, tophat,
-                                      stormCloud, duckBeak, 
-                                      arnoldSchwarzenegger, rageFace,
-                                      harold);
+        ChoiceBox<String> defaultHead = new ChoiceBox<String>();
+        defaultHead.getItems().addAll("Lantsberger", "Walrus", "Top Hat", "Stars", "Storm Clouds",
+                "Duck Beak", "Arnold Schwarznegger", "Rage Face", "Me Gusta", "Harold", "Clippy");
+        defaultHead.getSelectionModel().selectedIndexProperty().addListener(this::chooseHead);
         grid.add(defaultHead, 1, 4);
         
         // Custom images
@@ -132,19 +99,15 @@ public class OpenCVFx extends Application
         Label eyes2 = new Label("Eyes: ");
         grid.add(eyes2, 0, 6);
         
-        ChoiceBox<Button> customEyes = new ChoiceBox<>();
-        Button eyeOption = new Button("Custom");
-        customEyes.setOnAction(e -> System.out.print("insert upload code"));
-        customEyes.getItems().addAll(eyeOption);
-        grid.add(customEyes, 1, 6);
+        Button customEye = new Button("Custom");
+        customEye.setOnAction(e -> System.out.println("Custom Eye"));
+        grid.add(customEye, 1, 6);
         
         Label head2 = new Label("Head: ");
         grid.add(head2, 0, 7);
         
-        ChoiceBox<Button> customHead = new ChoiceBox<>();
-        Button headOption = new Button("Custom");
-        customHead.setOnAction(e -> System.out.print("insert upload code"));
-        customHead.getItems().addAll(headOption);
+        Button customHead = new Button("Custom");
+        customHead.setOnAction(e -> System.out.println("Custom Head"));
         grid.add(customHead, 1, 7);
 
         timer = Executors.newSingleThreadScheduledExecutor();
@@ -160,13 +123,23 @@ public class OpenCVFx extends Application
     @Override
     public void stop()
     {
-        imgs.close();
+        camera.close();
         timer.shutdown();
     }
     
     private void capture()
     {
         img.setImage(camera.takeFrame());
+    }
+
+    private void chooseEye(ObservableValue ov, Number value, Number newValue)
+    {
+        System.out.println(newValue);
+    }
+
+    private void chooseHead(ObservableValue ov, Number value, Number newValue)
+    {
+        System.out.println(newValue);
     }
 
     public static void main(String[] args)
