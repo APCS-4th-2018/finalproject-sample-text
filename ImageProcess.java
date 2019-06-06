@@ -41,6 +41,22 @@ public class ImageProcess
     }
 
     /**
+     * Construct a new <code>ImageProcess</code> without replacements.
+     *
+     * @param vidIndex Index of video capture device.
+     * @param face Face cascade classifier.
+     * @param eye Eye cascade classifier.
+     */
+    public ImageProcess(int vidIndex, String face, String eye)
+    {
+        cap = new VideoCapture(vidIndex);
+        faceClassifier = new Classifier(face);
+        eyeClassifier = new Classifier(eye);
+        faceReplacer = null;
+        eyeReplacer = null;
+    }
+
+    /**
      * Change the vidCap index.
      *
      * @param vidIndex New index to change vidCap to.
