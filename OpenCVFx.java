@@ -64,11 +64,6 @@ public class OpenCVFx extends Application
         img.setPreserveRatio(true);
         grid.add(img, 2, 0, 8, 7);
 
-        // Top buttons
-        Button button1 = new Button("Clear window");
-        button1.setOnAction(e -> {camera.setEyeReplacer(); camera.setFaceReplacer();});
-        grid.add(button1, 0, 0, 2, 1);
-
         // Default images
         Label defaultopts = new Label("Default");
         grid.add(defaultopts, 0, 2, 1, 2);
@@ -77,7 +72,7 @@ public class OpenCVFx extends Application
         grid.add(eyes, 0, 3);
         
         ChoiceBox<String> defaultEyes = new ChoiceBox<String>();
-        defaultEyes.getItems().addAll("Googly Eyes", "Monocole");
+        defaultEyes.getItems().addAll("Googly Eyes", "Monocle");
         defaultEyes.getSelectionModel().selectedIndexProperty().addListener(this::chooseEye);
         grid.add(defaultEyes, 1, 3);
         
@@ -88,6 +83,16 @@ public class OpenCVFx extends Application
         defaultHead.getItems().addAll("Lantsberger", "Clippy");
         defaultHead.getSelectionModel().selectedIndexProperty().addListener(this::chooseHead);
         grid.add(defaultHead, 1, 4);
+
+        // Top buttons
+        Button button1 = new Button("Clear window");
+        button1.setOnAction(e -> {
+            camera.setEyeReplacer();
+            camera.setFaceReplacer();
+            defaultEyes.getSelectionModel().clearSelection();
+            defaultHead.getSelectionModel().clearSelection();
+        });
+        grid.add(button1, 0, 0, 2, 1);
         
         // Custom images
         FileChooser fileChooser = new FileChooser();
@@ -143,14 +148,20 @@ public class OpenCVFx extends Application
 
     private void chooseEye(ObservableValue ov, Number value, Number newValue)
     {
-        Mat[] eye = ImageProcess.loadImage(EYEIMGS[newValue.intValue()]);
-        camera.setEyeReplacer(eye[0], eye[1]);
+        if (newValue.intValue() != -1)
+        {
+            Mat[] eye = ImageProcess.loadImage(EYEIMGS[newValue.intValue()]);
+            camera.setEyeReplacer(eye[0], eye[1]);
+        }
     }
 
     private void chooseHead(ObservableValue ov, Number value, Number newValue)
     {
-        Mat[] face = ImageProcess.loadImage(FACEIMGS[newValue.intValue()]);
-        camera.setFaceReplacer(face[0], face[1]);
+        if (newValue.intValue() != -1)
+        {
+            Mat[] face = ImageProcess.loadImage(FACEIMGS[newValue.intValue()]);
+            camera.setFaceReplacer(face[0], face[1]);
+        }
     }
 
     public static void main(String[] args)
@@ -159,7 +170,7 @@ public class OpenCVFx extends Application
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
         // Load Camera
-        camera = new ImageProcess(0, "haarcascade_frontalface_default.xml", "haarcascade_eye.xml");
+        camera = new ImageProcess(1, "haarcascade_frontalface_default.xml", "haarcascade_eye.xml");
         
         launch(args);
     }
