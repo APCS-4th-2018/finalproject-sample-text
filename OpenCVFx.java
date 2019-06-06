@@ -37,12 +37,17 @@ public class OpenCVFx extends Application
     @Override
     public void start(Stage stage)
     {
-        ImageView img = new ImageView();
         GridPane grid = new GridPane();
-        Button button, button2;
         grid.setPadding(new Insets(10, 10, 10, 10));
-        grid.setHgap(61.25);
-        grid.setVgap(65.55);
+        grid.setHgap(8);
+        grid.setVgap(8);
+
+        ImageView img = new ImageView();
+        img.setX(50);
+        img.setY(25);
+        img.setFitHeight(455);
+        img.setFitWidth(500);
+        img.setPreserveRatio(true);
         
         //Default eye buttons (replace prints with uploading image to window
         Button googly = new Button("Googly Eyes");
@@ -75,80 +80,66 @@ public class OpenCVFx extends Application
         rageFace.setOnAction(e -> System.out.println("rage"));
         Button harold = new Button("Harold");
         harold.setOnAction(e -> System.out.println("harold"));
-        
-        
+
         //Top buttons
-        button = new Button("Clear window");
-        button.setOnAction(e -> System.out.println("Clear"));
-        //replace print statement above with removing img from window
-        button2 = new Button("Upload image to window");
-        button.setOnAction(e -> System.out.println("Upload"));
-        //replace print statement above with uploading img to window
-        GridPane.setConstraints(button, 0, 0, 0, 1);
-        GridPane.setConstraints(button2, 1, 0, 0, 1);
+        Button button1 = new Button("Clear window");
+        button1.setOnAction(e -> System.out.println("Clear"));
+        grid.add(button1, 0, 0, 2, 1);
+
+        Button button2 = new Button("Upload image to window");
+        button1.setOnAction(e -> System.out.println("Upload"));
+        grid.add(button2, 0, 1, 2, 1);
         
         //Image
-        GridPane.setConstraints(img, 0, 2, 8, 7);
+        grid.add(img, 2, 0, 8, 7);
         
         //Default images
-        TextField defaultopts = new TextField("Default");
-        GridPane.setConstraints(defaultopts, 2, 0, 0, 2);
+        Label defaultopts = new Label("Default");
+        grid.add(defaultopts, 0, 2, 1, 2);
         
-        TextField eyes = new TextField("Eyes: ");
-        GridPane.setConstraints(eyes, 3, 0);
+        Label eyes = new Label("Eyes: ");
+        grid.add(eyes, 0, 3);
         
         ChoiceBox<Button> defaultEyes = new ChoiceBox<>();
         defaultEyes.getItems().addAll(googly, monocle, money,
                                       stars, hearts, tears);
-        GridPane.setConstraints(defaultEyes, 3, 1);
+        grid.add(defaultEyes, 1, 3);
         
-        TextField head = new TextField("Head: ");
-        GridPane.setConstraints(head, 4, 0);
+        Label head = new Label("Head: ");
+        grid.add(head, 0, 4);
         
         ChoiceBox<Button> defaultHead = new ChoiceBox<>();
         defaultHead.getItems().addAll(Lantsberger, walrus, tophat,
                                       stormCloud, duckBeak, 
                                       arnoldSchwarzenegger, rageFace,
                                       harold);
-        GridPane.setConstraints(defaultHead, 4, 1);
+        grid.add(defaultHead, 1, 4);
         
         //Custom images
-        TextField custom = new TextField("Custom: ");
-        GridPane.setConstraints(custom, 5, 0, 0, 2);
+        Label custom = new Label("Custom: ");
+        grid.add(custom, 0, 5, 1, 2);
         
-        TextField eyes2 = new TextField("Eyes: ");
-        GridPane.setConstraints(eyes2, 6, 0);
+        Label eyes2 = new Label("Eyes: ");
+        grid.add(eyes2, 0, 6);
         
         ChoiceBox<Button> customEyes = new ChoiceBox<>();
         Button eyeOption = new Button("Custom");
         customEyes.setOnAction(e -> System.out.print("insert upload code"));
         customEyes.getItems().addAll(eyeOption);
-        GridPane.setConstraints(customEyes, 6, 1);
+        grid.add(customEyes, 1, 6);
         
-        TextField head2 = new TextField("Head: ");
-        GridPane.setConstraints(head2, 7, 0);
+        Label head2 = new Label("Head: ");
+        grid.add(head2, 0, 7);
         
         ChoiceBox<Button> customHead = new ChoiceBox<>();
         Button headOption = new Button("Custom");
         customHead.setOnAction(e -> System.out.print("insert upload code"));
         customHead.getItems().addAll(headOption);
-        GridPane.setConstraints(customHead, 7, 1);
-        
-        grid.getChildren().addAll(button, button2, img, defaultopts,
-                                  eyes, defaultEyes, head, defaultHead,
-                                  custom, eyes2, customEyes, head2,
-                                  customHead);
-        
-        img.setX(50);
-        img.setY(25);
-        img.setFitHeight(455);
-        img.setFitWidth(500);
-        img.setPreserveRatio(true);
+        grid.add(customHead, 1, 7);
 
         timer = Executors.newSingleThreadScheduledExecutor();
-        timer.scheduleAtFixedRate(this::capture, 0, 33, TimeUnit.MILLISECONDS);
+        timer.scheduleAtFixedRate(this::capture, 100, 33, TimeUnit.MILLISECONDS);
 
-        Group root = new Group(img);
         Scene scene = new Scene(grid, 600, 500);
         
         stage.setTitle("Budget Snapchat Filter");
@@ -170,6 +161,9 @@ public class OpenCVFx extends Application
 
     public static void main(String[] args)
     {
+        // Load OpenCV
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
         Mat eye, eyemask, face, facemask;
         Mat[] temp;
         
@@ -180,7 +174,7 @@ public class OpenCVFx extends Application
         temp = ImageProcess.loadImage("face.png");
         face = temp[0];
         facemask = temp[1];
-        camera = new ImageProcess(1, "haarcascade_frontalface_default.xml",
+        camera = new ImageProcess(0, "haarcascade_frontalface_default.xml",
                                   "haarcascade_eye.xml",
                                   face, facemask, eye, eyemask);
         
