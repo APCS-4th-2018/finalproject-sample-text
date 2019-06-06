@@ -71,23 +71,23 @@ public class OpenCVFx extends Application
 
         // Default label for eyes
         Label eyes = new Label("Eyes: ");
-        grid.add(eyes, 0, 3);   // add to grid
+        grid.add(eyes, 0, 3);
 
         // Create a dropdown menu for eyes
         ChoiceBox<String> defaultEyes = new ChoiceBox<String>();
-        defaultEyes.getItems().addAll("Googly Eyes", "Monocle");    // add these to drop down
+        defaultEyes.getItems().addAll("Googly Eyes", "Monocle");
         defaultEyes.getSelectionModel().selectedIndexProperty().addListener(this::chooseEye);
-        grid.add(defaultEyes, 1, 3);    // add to grid
+        grid.add(defaultEyes, 1, 3);
 
         //Default label for head
         Label head = new Label("Head: ");
-        grid.add(head, 0, 4);   // add to grid
+        grid.add(head, 0, 4);
 
         // Dropdown menu for head
         ChoiceBox<String> defaultHead = new ChoiceBox<String>();
-        defaultHead.getItems().addAll("Lantsberger", "Clippy");     // add these to drop down
+        defaultHead.getItems().addAll("Lantsberger", "Clippy");
         defaultHead.getSelectionModel().selectedIndexProperty().addListener(this::chooseHead);
-        grid.add(defaultHead, 1, 4);    // add to grid
+        grid.add(defaultHead, 1, 4);
 
         // Top buttons
         Button button1 = new Button("Clear window");
@@ -105,32 +105,42 @@ public class OpenCVFx extends Application
 
         // Label for custom
         Label custom = new Label("Custom: ");
-        grid.add(custom, 0, 5, 1, 2);   // add to grid
+        grid.add(custom, 0, 5, 1, 2);
 
         // Allows user to navigate file explorer to upload an image.
         Button customEye = new Button("Eye");
         customEye.setOnAction(e ->
         {
             fileChooser.setTitle("View Pictures");
-            String customEyeDir = fileChooser.showOpenDialog(stage).toString();     // store file directory into string
+            File output = fileChooser.showOpenDialog(stage);
 
-            //load image
-            Mat[] eye = ImageProcess.loadImage(customEyeDir);
-            camera.setEyeReplacer(eye[0], eye[1]);
+            if (output != null)
+            {
+                String customEyeDir = output.toString();     // store file directory into string
+
+                //load image
+                Mat[] eye = ImageProcess.loadImage(customEyeDir);
+                camera.setEyeReplacer(eye[0], eye[1]);
+            }
         });
-        grid.add(customEye, 0, 6);  // add to grid
+        grid.add(customEye, 0, 6);
 
         // User adds an image to replace head with
         Button customHead = new Button("Head");
         customHead.setOnAction(e ->
         {
             fileChooser.setTitle("View Pictures");
-            String customHeadDir = fileChooser.showOpenDialog(stage).toString();    // store file directory
+            File output = fileChooser.showOpenDialog(stage);
 
-            Mat[] face = ImageProcess.loadImage(customHeadDir);
-            camera.setFaceReplacer(face[0], face[1]);
+            if (output != null)
+            {
+                String customHeadDir = output.toString();
+
+                Mat[] face = ImageProcess.loadImage(customHeadDir);
+                camera.setFaceReplacer(face[0], face[1]);
+            }
         });
-        grid.add(customHead, 0, 7);    // add to grid
+        grid.add(customHead, 0, 7);
 
         // Frame grabber
         timer = Executors.newSingleThreadScheduledExecutor();
@@ -150,17 +160,13 @@ public class OpenCVFx extends Application
         timer.shutdown();
     }
 
-    /*
-     * capture a specific frame
-     */
+
     private void capture()
     {
         img.setImage(camera.takeFrame());
     }
 
-    /*
-     * 
-     */
+
     private void chooseEye(ObservableValue ov, Number value, Number newValue)
     {
         if (newValue.intValue() != -1)
