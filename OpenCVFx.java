@@ -7,6 +7,7 @@
  */
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.image.Image;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
@@ -27,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 public class OpenCVFx extends Application
 {
+    private static final String[] EYEIMGS = {"imgs/googly.png", "imgs/monocle.png"};
+    private static final String[] FACEIMGS = {"imgs/lantsberger.png", "imgs/clippy.png"};
     private ImageView img;
     private static ImageProcess camera;
     private ScheduledExecutorService timer;
@@ -59,12 +62,11 @@ public class OpenCVFx extends Application
         img.setFitHeight(455);
         img.setFitWidth(500);
         img.setPreserveRatio(true);
-
         grid.add(img, 2, 0, 8, 7);
 
         // Top buttons
         Button button1 = new Button("Clear window");
-        button1.setOnAction(e -> System.out.println("Clear"));
+        button1.setOnAction(e -> {camera.setEyeReplacer(); camera.setFaceReplacer();});
         grid.add(button1, 0, 0, 2, 1);
 
         Button button2 = new Button("Upload image to window");
@@ -79,7 +81,7 @@ public class OpenCVFx extends Application
         grid.add(eyes, 0, 3);
         
         ChoiceBox<String> defaultEyes = new ChoiceBox<String>();
-        defaultEyes.getItems().addAll("Googly Eyes", "Monocole", "Money", "Stars", "Hearts", "Tears");
+        defaultEyes.getItems().addAll("Googly Eyes", "Monocole");
         defaultEyes.getSelectionModel().selectedIndexProperty().addListener(this::chooseEye);
         grid.add(defaultEyes, 1, 3);
         
@@ -87,8 +89,7 @@ public class OpenCVFx extends Application
         grid.add(head, 0, 4);
         
         ChoiceBox<String> defaultHead = new ChoiceBox<String>();
-        defaultHead.getItems().addAll("Lantsberger", "Walrus", "Top Hat", "Stars", "Storm Clouds",
-                "Duck Beak", "Arnold Schwarznegger", "Rage Face", "Me Gusta", "Harold", "Clippy");
+        defaultHead.getItems().addAll("Lantsberger", "Clippy");
         defaultHead.getSelectionModel().selectedIndexProperty().addListener(this::chooseHead);
         grid.add(defaultHead, 1, 4);
         
@@ -134,12 +135,14 @@ public class OpenCVFx extends Application
 
     private void chooseEye(ObservableValue ov, Number value, Number newValue)
     {
-        System.out.println(newValue);
+        Mat[] eye = ImageProcess.loadImage(EYEIMGS[newValue.intValue()]);
+        camera.setEyeReplacer(eye[0], eye[1]);
     }
 
     private void chooseHead(ObservableValue ov, Number value, Number newValue)
     {
-        System.out.println(newValue);
+        Mat[] face = ImageProcess.loadImage(FACEIMGS[newValue.intValue()]);
+        camera.setFaceReplacer(face[0], face[1]);
     }
 
     public static void main(String[] args)
@@ -147,19 +150,9 @@ public class OpenCVFx extends Application
         // Load OpenCV
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-        Mat eye, eyemask, face, facemask;
-        Mat[] temp;
-        
-        temp = ImageProcess.loadImage("eyes.png");
-        eye = temp[0];
-        eyemask = temp[1];
-        
-        temp = ImageProcess.loadImage("face.png");
-        face = temp[0];
-        facemask = temp[1];
-        camera = new ImageProcess(0, "haarcascade_frontalface_default.xml",
-                                  "haarcascade_eye.xml",
-                                  face, facemask, eye, eyemask);
+        // Load Camera
+        camera = new ImageProcess(0, "haarcascade_frontalface_default.xml", "haarcascade_eye.xml",
+                                  null, null, null, null);
         
         
         launch(args);
