@@ -1,9 +1,9 @@
 
 /**
- * Write a description of class GUI here.
+ * GUI For the budget snapchat filter.
  *
- * @author (your name)
- * @version (a version number or a date)
+ * @author Darrin Yun
+ * @version 2.0
  */
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.ChoiceBox;
 import javafx.geometry.Insets;
+import javafx.stage.FileChooser;
+import java.io.File;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -69,10 +71,6 @@ public class OpenCVFx extends Application
         button1.setOnAction(e -> {camera.setEyeReplacer(); camera.setFaceReplacer();});
         grid.add(button1, 0, 0, 2, 1);
 
-        Button button2 = new Button("Upload image to window");
-        button1.setOnAction(e -> System.out.println("Upload"));
-        grid.add(button2, 0, 1, 2, 1);
-        
         // Default images
         Label defaultopts = new Label("Default");
         grid.add(defaultopts, 0, 2, 1, 2);
@@ -94,22 +92,30 @@ public class OpenCVFx extends Application
         grid.add(defaultHead, 1, 4);
         
         // Custom images
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(
+                new File(System.getProperty("user.home")));
+
+
         Label custom = new Label("Custom: ");
         grid.add(custom, 0, 5, 1, 2);
         
-        Label eyes2 = new Label("Eyes: ");
-        grid.add(eyes2, 0, 6);
-        
-        Button customEye = new Button("Custom");
-        customEye.setOnAction(e -> System.out.println("Custom Eye"));
-        grid.add(customEye, 1, 6);
-        
-        Label head2 = new Label("Head: ");
-        grid.add(head2, 0, 7);
-        
-        Button customHead = new Button("Custom");
-        customHead.setOnAction(e -> System.out.println("Custom Head"));
-        grid.add(customHead, 1, 7);
+        Button customEye = new Button("Eye");
+        customEye.setOnAction(e ->
+        {
+            fileChooser.setTitle("View Pictures");
+            String customEyeDir = fileChooser.showOpenDialog(stage).toString();
+        });
+        grid.add(customEye, 0, 6);
+
+        Button customHead = new Button("Head");
+        customHead.setOnAction(e ->
+        {
+            fileChooser.setTitle("View Pictures");
+            String customHeadDir = fileChooser.showOpenDialog(stage).toString();
+            fileChooser.showOpenDialog(stage);
+        });
+        grid.add(customHead, 0, 7);
 
         timer = Executors.newSingleThreadScheduledExecutor();
         timer.scheduleAtFixedRate(this::capture, 100, 33, TimeUnit.MILLISECONDS);
