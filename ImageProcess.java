@@ -41,6 +41,22 @@ public class ImageProcess
     }
 
     /**
+     * Construct a new <code>ImageProcess</code> without replacements.
+     *
+     * @param vidIndex Index of video capture device.
+     * @param face Face cascade classifier.
+     * @param eye Eye cascade classifier.
+     */
+    public ImageProcess(int vidIndex, String face, String eye)
+    {
+        cap = new VideoCapture(vidIndex);
+        faceClassifier = new Classifier(face);
+        eyeClassifier = new Classifier(eye);
+        faceReplacer = null;
+        eyeReplacer = null;
+    }
+
+    /**
      * Change the vidCap index.
      *
      * @param vidIndex New index to change vidCap to.
@@ -137,7 +153,7 @@ public class ImageProcess
 
         if (faceReplacer != null)
             for (Rect face: faces)
-                faceReplacer.replace(frame, face);
+                try { faceReplacer.replace(frame, face);} catch (Exception e){ }
 
         return faces;
     }
@@ -148,7 +164,7 @@ public class ImageProcess
 
         if (eyeReplacer != null)
             for (Rect eye: eyes)
-                eyeReplacer.replace(frame, eye);
+                try { eyeReplacer.replace(frame, eye);} catch (Exception e){ }
     }
 
     /**
