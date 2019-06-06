@@ -137,7 +137,7 @@ public class ImageProcess
 
         if (faceReplacer != null)
             for (Rect face: faces)
-                faceReplacer.replace(frame, face);
+                try { faceReplacer.replace(frame, face);} catch (Exception e){ }
 
         return faces;
     }
@@ -148,7 +148,7 @@ public class ImageProcess
 
         if (eyeReplacer != null)
             for (Rect eye: eyes)
-                eyeReplacer.replace(frame, eye);
+                try { eyeReplacer.replace(frame, eye);} catch (Exception e){ }
     }
 
     /**
